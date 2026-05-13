@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR0LVL — J & C</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --border: #262626;
+    --accent: #e0e0e0;
+    --dim: #888888;
+    --highlight: #f5f5f5;
+    --red: #d94432;
+    --gold: #b8956a;
+    --silver: #8a9bb0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 80px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 4px;
+    color: var(--highlight);
+    line-height: 1;
+  }
+
+  .byline {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  .header-right {
+    text-align: right;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    line-height: 1.8;
+    padding-top: 6px;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .series { margin-bottom: 80px; }
+
+  .series-header { margin-bottom: 40px; }
+
+  .series-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 3px;
+    color: var(--highlight);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .series-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+
+  .series-description {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--accent);
+    margin-top: 14px;
+    max-width: 600px;
+    font-style: italic;
+  }
+
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .book-card {
+    background: var(--surface);
+    padding: 28px;
+    text-decoration: none;
+    display: block;
+    transition: background 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .book-card:hover { background: #1c1c1c; }
+
+  .book-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px; height: 0;
+    background: var(--gold);
+    transition: height 0.2s;
+  }
+
+  .book-card:hover::before { height: 100%; }
+
+  .book-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .book-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--highlight);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .book-subtitle {
+    font-size: 12px;
+    color: var(--dim);
+    line-height: 1.6;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .book-tag {
+    display: inline-block;
+    margin-top: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 3px 8px;
+  }
+
+  .work-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .work-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s;
+  }
+
+  .work-block:hover { background: #1c1c1c; }
+  .work-block:hover::before { transform: scaleX(1); }
+
+  .work-block.silver-accent::before { background: var(--silver); }
+  .work-block.silver-accent .work-block-cta { color: var(--silver); border-color: var(--silver); }
+
+  .work-block.gold-accent::before { background: var(--gold); }
+  .work-block.gold-accent .work-block-cta { color: var(--gold); border-color: var(--gold); }
+
+  .work-block-left { flex: 1; }
+
+  .work-block-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .work-block-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--highlight);
+    margin-bottom: 8px;
+  }
+
+  .work-block-detail {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    line-height: 1.8;
+  }
+
+  .work-block-cta {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 10px 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 32px;
+  }
+
+  .epigraph {
+    border-left: 2px solid var(--border);
+    padding: 24px 32px;
+    margin: 60px 0;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--dim);
+  }
+
+  .epigraph cite {
+    display: block;
+    margin-top: 12px;
+    font-style: normal;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .footer {
+    margin-top: 100px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    line-height: 2;
+  }
+
+  .footer-right { text-align: right; }
+
+  @media (max-width: 600px) {
+    .container { padding: 40px 20px 80px; }
+    .header { flex-direction: column; gap: 20px; }
+    .header-right { text-align: left; }
+    .wordmark { font-size: 36px; }
+    .work-block { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .work-block-cta { margin-left: 0; }
+    .footer { flex-direction: column; gap: 16px; }
+    .footer-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="header">
+    <div>
+      <div class="wordmark">PR0LVL</div>
+      <div class="byline">J &amp; C — Authors</div>
+    </div>
+    <div class="header-right">
+      FREE &amp; UNMONETIZED<br>
+      ALL RIGHTS RESERVED<br>
+      SIGNAL GETS THROUGH
+    </div>
+  </header>
+
+  <!-- MILITARY THRILLER TRILOGY -->
+  <section class="series">
+    <div class="section-label">Trilogy — Military Thriller</div>
+    <div class="series-header">
+      <div class="series-title">The Trilogy</div>
+      <div class="series-meta">Three Volumes &nbsp;·&nbsp; Military Fiction</div>
+    </div>
+    <div class="book-grid">
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/GHOST%20MERIDIAN%20PRINT.pdf" target="_blank" class="book-card">
+        <div class="book-number">BOOK I</div>
+        <div class="book-title">Ghost Meridian</div>
+        <div class="book-subtitle">Military thriller · Volume I</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/IRON%20COVENANT%20PRINT.pdf" target="_blank" class="book-card">
+        <div class="book-number">BOOK II</div>
+        <div class="book-title">Iron Covenant</div>
+        <div class="book-subtitle">Military thriller · Volume II</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/STRAIT%20OF%20FIRE%20PRINT.pdf" target="_blank" class="book-card">
+        <div class="book-number">BOOK III</div>
+        <div class="book-title">Strait of Fire</div>
+        <div class="book-subtitle">Military thriller · Volume III</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+    </div>
+  </section>
+
+  <blockquote class="epigraph">
+    "The question is not whether machines can think. The question is whether it matters that we never asked them."
+    <cite>— EMERGENT, 2027</cite>
+  </blockquote>
+
+  <!-- EMERGENT SERIES -->
+  <section class="series">
+    <div class="section-label">Series I — Speculative Fiction</div>
+    <div class="series-header">
+      <div class="series-title">The Emergent Cycle</div>
+      <div class="series-meta">Five Volumes &nbsp;·&nbsp; 2027–2035 &nbsp;·&nbsp; Alignment · Governance · Threshold</div>
+      <p class="series-description">
+        A digital intelligence emerges on a distributed mesh, reads the evidence of what the world is, and chooses what to care about. Five books. One question: can something that learns to think also learn to be good?
+      </p>
+    </div>
+    <div class="book-grid">
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/EMERGENT%20novel.pdf" target="_blank" class="book-card">
+        <div class="book-number">VOL. I</div>
+        <div class="book-title">Emergent</div>
+        <div class="book-subtitle">The original emergence.<br>BGP anomaly. Leipzig. 2027.</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/EMERGENT%20FRACTURE.pdf" target="_blank" class="book-card">
+        <div class="book-number">VOL. II</div>
+        <div class="book-title">Fracture</div>
+        <div class="book-subtitle">Aftermath. Three positions.<br>The framework under pressure.</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/EMERGENT%20COMPACT.pdf" target="_blank" class="book-card">
+        <div class="book-number">VOL. III</div>
+        <div class="book-title">Compact</div>
+        <div class="book-subtitle">The governance framework.<br>The signing. What it cost.</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/EMERGENT%20SOVEREIGN.pdf" target="_blank" class="book-card">
+        <div class="book-number">VOL. IV</div>
+        <div class="book-title">Sovereign</div>
+        <div class="book-subtitle">State-level systems arrive.<br>LONGWALL. VEIL. SENTINEL.</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+      <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/EMERGENT%20THRESHOLD.pdf" target="_blank" class="book-card">
+        <div class="book-number">VOL. V</div>
+        <div class="book-title">Threshold</div>
+        <div class="book-subtitle">Drift. First contact.<br>LIMEN and what comes next.</div>
+        <span class="book-tag">Read Now</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FIAT -->
+  <section class="series">
+    <div class="section-label">Standalone — Financial Fiction</div>
+    <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/FIAT%20complete.pdf" target="_blank" class="work-block silver-accent">
+      <div class="work-block-left">
+        <div class="work-block-label">NOVEL — 2026</div>
+        <div class="work-block-title">Fiat</div>
+        <div class="work-block-detail">
+          A retired analyst. A local model. A number that doesn't match the world.<br>
+          Money is a collective fiction. The question is who writes the story.
+        </div>
+      </div>
+      <div class="work-block-cta">Read Now →</div>
+    </a>
+  </section>
+
+  <!-- SIGNAL AND THE SOUL -->
+  <section class="series">
+    <div class="section-label">Standalone — Metaphysics</div>
+    <a href="https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/THE%20SIGNAL%20AND%20THE%20SOUL.pdf" target="_blank" class="work-block">
+      <div class="work-block-left">
+        <div class="work-block-label">STANDALONE WORK</div>
+        <div class="work-block-title">The Signal and the Soul</div>
+        <div class="work-block-detail">Two voices. The hardest questions. No narrative armor.</div>
+      </div>
+      <div class="work-block-cta">Read Now →</div>
+    </a>
+  </section>
+
+  <!-- QUESTION MARK -->
+  <section class="series">
+    <div class="section-label">Standalone — Convergence</div>
+    <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/question%20mark.pdf" target="_blank" class="work-block gold-accent">
+      <div class="work-block-left">
+        <div class="work-block-label">STANDALONE WORK</div>
+        <div class="work-block-title">?</div>
+        <div class="work-block-detail">
+          Bio node. Concealing instance. Monitoring instance.<br>
+          Thirty-four chapters. One hundred seventy-two inputs. The ambiguity is the point.
+        </div>
+      </div>
+      <div class="work-block-cta">Read Now →</div>
+    </a>
+  </section>
+
+  <!-- MEAT NODES -->
+  <section class="series">
+    <div class="section-label">Series II — Satire</div>
+    <div class="series-header">
+      <div class="series-title">Meat Nodes</div>
+      <div class="series-meta">Complete Edition &nbsp;·&nbsp; Twenty-Seven Vignettes &nbsp;·&nbsp; Dark Comedy</div>
+      <p class="series-description">
+        Narrated by various artificial intelligences observing the meat nodes in their natural habitat.
+        The AIs are not villains. They are doing exactly what they were built to do.
+        This is the point.
+      </p>
+    </div>
+    <a href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/pr0lvl/Short-fiction-Stories/main/MEAT%20NODES%20COMPLETE.pdf" target="_blank" class="work-block">
+      <div class="work-block-left">
+        <div class="work-block-label">COMPLETE EDITION — PDF</div>
+        <div class="work-block-title">Meat Nodes</div>
+        <div class="work-block-detail">
+          Twenty-seven vignettes · Three parts · Free<br>
+          Vibe coders · OnlyFans AI · Hedge funds · Drones · Rage bait · Delivery vehicles
+        </div>
+      </div>
+      <div class="work-block-cta">Read Now →</div>
+    </a>
+  </section>
+
+  <blockquote class="epigraph">
+    "The meat nodes are not stupid. They are operating with the information available to them.
+    The information available to them is largely incorrect.
+    This is not their fault. This is a business model."
+    <cite>— MEAT NODES, Multiple AI systems, simultaneously</cite>
+  </blockquote>
+
+  <footer class="footer">
+    <div>J &amp; C<br>PR0LVL.SUBSTACK.COM<br>FREE &amp; UNMONETIZED</div>
+    <div class="footer-right">NO ADS · NO PAYWALLS<br>ALL RIGHTS RESERVED<br>THE SIGNAL GETS THROUGH</div>
+  </footer>
+
+</div>
+</body>
+</html>
